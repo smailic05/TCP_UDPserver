@@ -37,11 +37,11 @@ bool TCPClient::setup(int port, string& address) {
     }
     else
     {
-        cout<<"address is incorrect";
+        cout<<"address is incorrect"<<endl;
     }
     if (connect(sock , (struct sockaddr *)&addr , sizeof(addr)) < 0)
     {
-        cout<<"connect failed. Error";
+        cout<<"connect failed. Error"<<endl;
         exit(1);
     }
 
@@ -51,11 +51,12 @@ bool TCPClient::setup(int port, string& address) {
 bool TCPClient::sendTCP(string &data) const {
     if(sock != -1)
     {
-        if( send(sock , data.c_str() , data.size() , 0) < 0)
+        int bytes=send(sock , data.c_str() , data.size() , 0);
+        if( bytes != sizeof (data.c_str()))
         {
             cout << "Send failed : " << data << endl;
             return false;
-        }// TODO проверка на количество отправленных байт
+        }
     }
     else
         return false;

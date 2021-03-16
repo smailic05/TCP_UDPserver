@@ -15,38 +15,51 @@ int main(int argc, char **argv) {
     vector<int> buf;
     struct pollfd fds[30];
     string test;
-    int new_client;
+    int newClient;
+    string toSend;
 
     thread threadUDP(threadUDPFunc);
 
-    tcpServer.setup(PORT);
+    if(!tcpServer.setup(PORT))
+    {
+        {
+            cout<<"can`t TCP create socket on port"<<PORT<<endl;
+            exit(1);
+        }
+    }
     fds[0].fd = tcpServer.getListener();
     fds[0].events = POLLIN;
 
     while (true) {
 
 
-        int ret = poll(fds, 30, 80000000);
+        int ret = poll(fds, 30, NULL);
         // проверяем успешность вызова
         if (ret == -1)
             cerr << "error" << endl;
         else {
             // обнаружили событие, обнулим revents чтобы можно было переиспользовать структуру
-            if (fds[0].revents == POLLIN) {
+            if (fds[0].revents == POLLIN){
                 fds[0].revents = 0;
-                new_client = tcpServer.acceptTCP();
-                for (int i = 1; i < 30; i++) {
-                    if (fds[i].fd == 0) {
-                        fds[i].fd = new_client;
-                        fds[i].events = POLLIN;
-                        break;
+                newClient = tcpServer.acceptTCP();
+                if(newClient>0) {
+                    for (int i = 1; i < 30; i++) {
+                        if (fds[i].fd == 0) {
+                            fds[i].fd = newClient;
+                            fds[i].events = POLLIN;
+                            break;
+                        }
                     }
+                    test = TCPServer::receive(1024, newClient);
+                    arr = split(test, ' ');
+                    strToInt(arr, buf);
+                    if (buf.empty()) {
+                        toSend = "there is a problem with your string, please input only digits";
+                    } else {
+                        toSend = to_string(sum(buf));
+                    }
+                    TCPServer::sendTCP(toSend, newClient);
                 }
-                test = TCPServer::receive(1024, new_client);
-                arr=split(test,' ');
-                strToInt(arr,buf);
-                string toSend=to_string(sum(buf));
-                TCPServer::sendTCP(toSend,new_client);
             }
             else
                 {
@@ -56,7 +69,7 @@ int main(int argc, char **argv) {
                         test = TCPServer::receive(1024, fds[i].fd);
                         arr=split(test,' ');
                         strToInt(arr,buf);
-                        string toSend=to_string(sum(buf));
+                        toSend=to_string(sum(buf));
                         TCPServer::sendTCP(toSend,fds[i].fd);
                     }
                     else
@@ -67,7 +80,6 @@ int main(int argc, char **argv) {
                             fds[i].revents = 0;
                         }
                     }
-                    // TODO check if client hung up
                 }
 
             }
@@ -75,7 +87,6 @@ int main(int argc, char **argv) {
 
     }
     //TODO safe quit
-    // TODO sum in loop?
 }
 void threadUDPFunc()
 {
@@ -83,7 +94,11 @@ void threadUDPFunc()
     vector<int> buf;
     string rv;
     UDPServer udpServer;
-    udpServer.setup(PORT);
+    if(!udpServer.setup(PORT))
+    {
+        cout<<"can`t UDP create socket on port"<<PORT<<endl;
+        exit(1);
+    }
     while (true)
     {
         rv=udpServer.receive(1024);
@@ -98,16 +113,16 @@ void threadUDPFunc()
 vector<string> split(const string &s, char delim) {
     stringstream ss(s);
     string item;
-    vector<string> elems;
+    vector<string> elements;
     while (getline(ss, item, delim))
     {
-        if (item!="") //TODO strcmp all!!
+        if (!item.empty())
         {
-            elems.push_back(item);
+            elements.push_back(item);
         }
 
     }
-    return elems;
+    return elements;
 }
 
 int sum(vector<int> num)
@@ -133,9 +148,12 @@ void strToInt(vector<string> &arr,vector<int> &buf)
             std::cerr<<"error " << '\n';
             if ( e.what()=="stoi")
             {
-                cout<< "there is a problem with your string, please input only digits";
+                buf.clear();
+            } else
+            {
+                cout<<"unknown error";
+               buf.clear();
             }
-            exit(3);
         }
     }
 }

@@ -14,7 +14,7 @@ bool UDPServer::setup(int port) {
     if(sock < 0)
     {
         perror("socket");
-        exit(1); //TODO make return instead of exit
+        return false;
     }
 
     addr.sin_family = AF_INET;
@@ -23,7 +23,7 @@ bool UDPServer::setup(int port) {
     if(bind(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0)
     {
         perror("bind");
-        exit(2);
+        return false;
     }
 
     return true;
@@ -33,7 +33,8 @@ bool UDPServer::sendUDP(string &data) const {
     socklen_t length=sizeof(struct sockaddr_in);
     if(sock != -1)
     {
-        if( sendto(sock , data.c_str() , data.size() , 0,(struct sockaddr *)&addr,length) < 0) //TODO check all existed errors
+        int bytes=sendto(sock , data.c_str() , data.size() , 0,(struct sockaddr *)&addr,length) < 0;
+        if( bytes != data.size())
         {
             cout << "Send failed : " << data << endl;
             return false;
@@ -49,7 +50,7 @@ string UDPServer::receive(int size) const {
     socklen_t length=sizeof(struct sockaddr_in);
     memset(&buffer[0], 0, sizeof(buffer));
     string reply;
-    if(recvfrom(sock , buffer , size, 0, (struct sockaddr *)&addr,&length) < 0)
+    if(recvfrom(sock , buffer , size, 0, (struct sockaddr *)&addr,&length) < 0)// NOTE after receiving addr=source address
     {
         cout << "receive failed!" << endl;
         return "";

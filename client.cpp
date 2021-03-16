@@ -9,15 +9,14 @@ int main(int argc, char **argv) {
     }
     if(strcmp(argv[1],"tcp") ==0)
     {
-        address="127.0.0.1";
         TCPClient tcpClient;
         tcpClient.setup(PORT,address); //127.0.0.1 for loopback
         while (true)
         {
             string message;
-            cin>>message;
+            getline(cin,message);
             tcpClient.sendTCP(message);
-            cout<<tcpClient.receive(1024);
+            cout<<tcpClient.receive(1024)<<endl;
             cout<<"you can input another value"<<endl;
         }
     } else if (strcmp(argv[1],"udp") ==0)
@@ -29,7 +28,7 @@ int main(int argc, char **argv) {
             string message;
             getline(cin,message);
             udpClient.sendUDP(message);
-            cout<<udpClient.receive(1024);
+            cout<<udpClient.receive(1024)<<endl;
             cout<<"you can input another value"<<endl;
         }
     }

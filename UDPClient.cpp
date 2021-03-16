@@ -47,7 +47,8 @@ bool UDPClient::sendUDP(string &data) const {
     socklen_t length=sizeof(struct sockaddr_in);
     if(sock != -1)
     {
-        if( sendto(sock , data.c_str() , data.size() , 0,(struct sockaddr *)&addr,length) < 0)
+        int bytes=sendto(sock , data.c_str() , data.size() , 0,(struct sockaddr *)&addr,length);
+        if( bytes != data.size())
         {
             cout << "Send failed : " << data << endl;
             return false;

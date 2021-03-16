@@ -14,7 +14,7 @@ int TCPServer::acceptTCP() {
     if(sock < 0)
     {
         perror("accept");
-        exit(3);
+        return -1;
     }
     return sock;
 }
@@ -24,7 +24,7 @@ bool TCPServer::setup(int port) {
     if(listener < 0)
     {
         perror("socket");
-        exit(1);
+        return false;
     }
 
     addr.sin_family = AF_INET;
@@ -33,13 +33,13 @@ bool TCPServer::setup(int port) {
     if(bind(listener, (struct sockaddr *)&addr, sizeof(addr)) < 0)
     {
         perror("bind");
-        exit(2);
+        return false;
     }
 
     if(listen(listener, 30)<0)
     {
         perror("listen");
-        exit(3);
+        return false;
     }
 
     return true;
@@ -48,7 +48,8 @@ bool TCPServer::setup(int port) {
 bool TCPServer::sendTCP(string &data) const {
     if(sock != -1)
     {
-        if( send(sock , data.c_str() , data.size() , 0) < 0)
+        int bytes=send(sock , data.c_str() , data.size() , 0);
+        if( bytes != sizeof (data.c_str()))
         {
             cout << "Send failed : " << data << endl;
             return false;
@@ -102,7 +103,8 @@ string TCPServer::receive(int size, int sock) {
 bool TCPServer::sendTCP(string &data, int sock) {
     if(sock != -1)
     {
-        if( send(sock , data.c_str() , data.size() , 0) < 0)
+        int bytes=send(sock , data.c_str() , data.size() , 0);
+        if( bytes != data.size())
         {
             cout << "Send failed : " << data << endl;
             return false;
