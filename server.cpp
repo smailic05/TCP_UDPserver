@@ -32,8 +32,8 @@ int main(int argc, char **argv) {
 
     while (true) {
 
-
-        int ret = poll(fds, 30, NULL);
+        buf.clear();
+        int ret = poll(fds, 30, 50000);
         // проверяем успешность вызова
         if (ret == -1)
             cerr << "error" << endl;
@@ -51,14 +51,22 @@ int main(int argc, char **argv) {
                         }
                     }
                     test = TCPServer::receive(1024, newClient);
-                    arr = split(test, ' ');
-                    strToInt(arr, buf);
-                    if (buf.empty()) {
-                        toSend = "there is a problem with your string, please input only digits";
-                    } else {
-                        toSend = to_string(sum(buf));
+                    if (test.empty())
+                    {
+                        toSend="received an empty string";
+                        TCPServer::sendTCP(toSend, newClient);
                     }
-                    TCPServer::sendTCP(toSend, newClient);
+                    else
+                    {
+                        arr = split(test, ' ');
+                        strToInt(arr, buf);
+                        if (buf.empty()) {
+                            toSend = "there is a problem with your string, please input only digits";
+                        } else {
+                            toSend = to_string(sum(buf));
+                        }
+                        TCPServer::sendTCP(toSend, newClient);
+                    }
                 }
             }
             else
@@ -67,14 +75,27 @@ int main(int argc, char **argv) {
                     if (fds[i].revents == POLLIN) {
                         fds[i].revents = 0;
                         test = TCPServer::receive(1024, fds[i].fd);
-                        arr=split(test,' ');
-                        strToInt(arr,buf);
-                        toSend=to_string(sum(buf));
-                        TCPServer::sendTCP(toSend,fds[i].fd);
+                        if (test.empty())
+                        {
+                            toSend="received an empty string";
+                            TCPServer::sendTCP(toSend, newClient);
+                        }
+                        else {
+                            arr = split(test, ' ');
+                            strToInt(arr, buf);
+                            if (buf.empty()) {
+                                toSend = "there is a problem with your string, please input only digits";
+                            } else {
+                                toSend = to_string(sum(buf));
+                            }
+                            toSend = to_string(sum(buf));
+                            TCPServer::sendTCP(toSend, fds[i].fd);
+
+                        }
                     }
                     else
                     {
-                        if (fds[i].revents == POLLHUP)
+                        if (fds[i].revents & POLLHUP)
                         {
                             fds[i].fd=0;
                             fds[i].revents = 0;
@@ -106,6 +127,7 @@ void threadUDPFunc()
         strToInt(arr,buf);
         string toSend=to_string(sum(buf));
         udpServer.sendUDP(toSend);
+        buf.clear();
     }
 }
 

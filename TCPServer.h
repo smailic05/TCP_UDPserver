@@ -31,8 +31,8 @@ public:
     int acceptTCP();
     int getSock();
     bool setup(int port);
-    static bool sendTCP(string &data, int sock);
-    bool sendTCP(string &data) const;
+    static bool sendTCP(string &data, int &sock);
+    bool sendTCP(string &data) ;
     string receive(int size) const;
     static string receive(int size, int sock) ;
     void exitTCP() const;

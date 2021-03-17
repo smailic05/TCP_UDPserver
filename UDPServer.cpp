@@ -18,7 +18,7 @@ bool UDPServer::setup(int port) {
     }
 
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(PORT);
+    addr.sin_port = htons(port);
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
     if(bind(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0)
     {
@@ -34,6 +34,7 @@ bool UDPServer::sendUDP(string &data) const {
     if(sock != -1)
     {
         int bytes=sendto(sock , data.c_str() , data.size() , 0,(struct sockaddr *)&addr,length) < 0;
+
         if( bytes != data.size())
         {
             cout << "Send failed : " << data << endl;

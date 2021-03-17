@@ -45,11 +45,16 @@ bool TCPServer::setup(int port) {
     return true;
 }
 
-bool TCPServer::sendTCP(string &data) const {
+bool TCPServer::sendTCP(string &data)  {
     if(sock != -1)
     {
         int bytes=send(sock , data.c_str() , data.size() , 0);
-        if( bytes != sizeof (data.c_str()))
+        if (bytes==-1)
+        {
+            sock=0;
+            return false;
+        }
+        if( bytes != data.size())
         {
             cout << "Send failed : " << data << endl;
             return false;
@@ -93,17 +98,22 @@ string TCPServer::receive(int size, int sock) {
     if( recv(sock , buffer , size, 0) < 0)
     {
         cout << "receive failed!" << endl;
-        return nullptr;
+        return "";
     }
     buffer[size-1]='\0';
     reply = buffer;
     return reply;
 }
 
-bool TCPServer::sendTCP(string &data, int sock) {
+bool TCPServer::sendTCP(string &data, int &sock) {
     if(sock != -1)
     {
         int bytes=send(sock , data.c_str() , data.size() , 0);
+        if (bytes==-1)
+        {
+            sock=0;
+            return false;
+        }
         if( bytes != data.size())
         {
             cout << "Send failed : " << data << endl;

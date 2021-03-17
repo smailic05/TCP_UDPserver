@@ -52,7 +52,7 @@ bool TCPClient::sendTCP(string &data) const {
     if(sock != -1)
     {
         int bytes=send(sock , data.c_str() , data.size() , 0);
-        if( bytes != sizeof (data.c_str()))
+        if( bytes != data.size())
         {
             cout << "Send failed : " << data << endl;
             return false;
@@ -70,7 +70,7 @@ string TCPClient::receive(int size) const {
     if( recv(sock , buffer , size, 0) < 0)
     {
         cout << "receive failed!" << endl;
-        return nullptr;
+        return "";
     }
     buffer[size-1]='\0';
     reply = buffer;
