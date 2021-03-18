@@ -1,6 +1,4 @@
-//
-// Created by murad on 3/14/21.
-//
+
 
 #include "TCPServer.h"
 

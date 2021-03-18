@@ -107,7 +107,6 @@ int main(int argc, char **argv) {
         }
 
     }
-    //TODO safe quit
 }
 void threadUDPFunc()
 {
@@ -163,19 +162,12 @@ void strToInt(vector<string> &arr,vector<int> &buf)
     {
         try
         {
-            buf.push_back(stoi(i)); //string to int massive
+            buf.push_back(stoi(i));
         }
         catch(const std::exception& e)
         {
             std::cerr<<"error " << '\n';
-            if ( e.what()=="stoi")
-            {
-                buf.clear();
-            } else
-            {
-                cout<<"unknown error";
-               buf.clear();
-            }
+            buf.clear();
         }
     }
 }

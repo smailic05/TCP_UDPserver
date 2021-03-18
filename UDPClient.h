@@ -1,6 +1,4 @@
 
-// Created by murad on 3/14/21.
-//
 
 #ifndef TCP_UDPSERVER_UDPCLIENT_H
 #define TCP_UDPSERVER_UDPCLIENT_H

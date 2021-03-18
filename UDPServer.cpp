@@ -1,6 +1,3 @@
-//
-// Created by murad on 3/14/21.
-//
 
 
 #include "UDPServer.h"
@@ -35,7 +32,7 @@ bool UDPServer::sendUDP(string &data) const {
     {
         int bytes=sendto(sock , data.c_str() , data.size() , 0,(struct sockaddr *)&addr,length) < 0;
 
-        if( bytes != data.size())
+        if( bytes < 0 )
         {
             cout << "Send failed : " << data << endl;
             return false;
