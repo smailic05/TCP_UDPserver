@@ -78,7 +78,7 @@ int main(int argc, char **argv) {
                         if (test.empty())
                         {
                             toSend="received an empty string";
-                            TCPServer::sendTCP(toSend, newClient);
+                            TCPServer::sendTCP(toSend, fds[i].fd);
                         }
                         else {
                             arr = split(test, ' ');
