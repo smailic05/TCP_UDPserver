@@ -20,9 +20,6 @@ private:
     struct sockaddr_in addr;
     struct in_addr i_addr;
 public:
-    void eraseArr();                        //
-    void setArr(vector<string> &s);          //
-    vector<string> getArr();                // is it necessary?
     bool setup(int port,string& address);
     bool sendTCP(string &data) const;
     string receive(int size) const;

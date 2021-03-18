@@ -1,17 +1,6 @@
 
 #include "TCPClient.h"
 
-void TCPClient::eraseArr() {
-    arr.clear();
-}
-
-void TCPClient::setArr(vector<string> &s) {
-    arr=s;
-}
-
-vector<string> TCPClient::getArr() {
-    return arr;
-}
 
 bool TCPClient::setup(int port, string& address) {
     sock = socket(AF_INET , SOCK_STREAM , 0);

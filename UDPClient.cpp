@@ -1,17 +1,7 @@
 
 #include "UDPClient.h"
 
-void UDPClient::eraseArr() {
-    arr.clear();
-}
 
-void UDPClient::setArr(vector<string> &s) {
-    arr=s;
-}
-
-vector<string> UDPClient::getArr() {
-    return arr;
-}
 
 bool UDPClient::setup(int port, string &address) {
     sock = socket(AF_INET , SOCK_DGRAM , 0);
